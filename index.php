@@ -12,6 +12,16 @@ if (isset($_SESSION["user_id"])) {
     $result = $mysqli->query($sql);
     
     $user = $result->fetch_assoc();
+
+
+    // Verifica se l'utente è stato trovato
+    if ($user) {
+        // Ottieni gli eventi associati all'utente
+        $email = $user["email"];
+        $eventiSql = "SELECT * FROM eventi WHERE FIND_IN_SET('{$email}', attendees)";
+        $eventiResult = $mysqli->query($eventiSql);
+        $eventi = $eventiResult->fetch_all(MYSQLI_ASSOC);
+    }
 }
 
 ?>
@@ -28,7 +38,16 @@ if (isset($_SESSION["user_id"])) {
     
     <?php if (isset($user)): ?>
         
-        <p>Hello <?= htmlspecialchars($user["nome"]) ?></p>
+        <p>Welcome <?= htmlspecialchars($user["nome"]) ?> <?= htmlspecialchars($user["cognome"]) ?></p>
+
+        <?php if (isset($eventi) && count($eventi) > 0): ?>
+            <h2>Eventi a cui partecipi:</h2>
+            <ul>
+                <?php foreach ($eventi as $evento): ?>
+                    <li><?= htmlspecialchars($evento["nome_evento"]) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
         
         <p><a href="logout.php">Log out</a></p>
         
@@ -37,6 +56,7 @@ if (isset($_SESSION["user_id"])) {
         <p><a href="login.php">Log in</a> or <a href="signup.html">sign up</a></p>
         
     <?php endif; ?>
+
     
 </body>
 </html>
