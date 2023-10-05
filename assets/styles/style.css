@@ -1,4 +1,135 @@
+
+* {
+    font-family: sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #D9E5F3;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* indipendent components */
+.bg-zone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background-image: url('bg-img.png'); 
+    background-size: cover; 
+    background-repeat: no-repeat; 
+    background-position: center center; 
+}
+
+
+header{
+    width: 100%;
+    height: 150px;
+    background-color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    border-bottom-left-radius: .7rem;
+    border-bottom-right-radius: .7rem;
+    border: 0px solid #000;
+    background: #FFF;
+    box-shadow: 0px 4px 18px -6px #0057FF;
+}
+
+.edusogno{
+    width: 123.136px;
+    height: 52.275px;
+    flex-shrink: 0;
+    margin-left: 2rem;
+}
+
+.title{
+    margin-top: 5rem;
+    margin-bottom: 3rem;
+    color: #134077;
+    text-align: center;
+    font-family: DM Sans;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 99.5%;
+}
+
+button {
+    background-color: #0066ff;
+    color: #fff;
+    width: 577px;
+    height: 59px;
+    border: 0;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color .3s ease;
+    align-content: center;
+}
+
+button:hover {
+    opacity: .7;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    margin-top: 3.5rem; 
+}
+
+.link-util{
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    margin-top: 3.5rem; 
+}
+
+.main-content{
+    margin-top: 200px;
+}
+
+.background{
+    width: 662px;
+    height: 604px;
+    border: 2px solid #ccc;
+    padding: 30px;
+    margin-bottom: 7rem;
+    background: #fff;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    display: block;
+    border: none;
+    border-bottom: 2px solid rgb(7, 7, 7);
+    width: 95%;
+    padding: 10px;
+    margin-bottom: 2rem;
+}
+
+label {
+    font-family: DM Sans;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 700;
+}
+
 .error-message {
     color: red;
     font-size: 14px;
 }
+
