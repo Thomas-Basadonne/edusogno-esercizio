@@ -1,6 +1,6 @@
 <?php
 
-class Evento {
+class Event {
     private $id; 
     private $nome_evento;
     private $attendees;
@@ -40,5 +40,5 @@ class Evento {
     public function getDataEvento() {
         return $this->data_evento;
     }
-
 }
+?>
