@@ -70,8 +70,7 @@
 
     <div class="bg-zone">
     <h1 class="title">Admin Dashboard</h1>
-        <div class="main-content">
-            <div class="index-ev">
+        <div class="index-ev">
                 <h2 class="title">Elenco degli eventi</h2>
                 <table>
                     <tr>
@@ -97,7 +96,8 @@
                         </tr>
                     <?php endforeach; ?>
                 </table>
-            </div>
+        </div>
+        <div class="main-content">      
             <div>
                 <h2 class="title">Aggiungi un nuovo evento</h2>
                 <form class="form-add" method="post">
