@@ -1,16 +1,57 @@
+<?php
+    // Includi il file con la definizione delle classi Event e EventController
+    require_once('event.php');
+    require_once('eventController.php');
+
+    // Connessione al database
+    $mysqli = require_once('database.php');
+
+    // Creazione dell'oggetto EventController e passaggio della connessione al database
+    $eventController = new EventController($mysqli);
+
+    // Esegui operazioni CRUD in base all'azione selezionata
+    if (isset($_POST['action'])) {
+        $action = $_POST['action'];
+
+        if ($action === 'add') {
+            // Aggiungi un nuovo evento
+            $evento = new Event(null, $_POST['nome_evento'], $_POST['attendees'], $_POST['data_evento']);
+            if ($eventController->aggiungiEvento($evento)) {
+                echo "Nuovo evento aggiunto con successo.<br>";
+            }
+        } elseif ($action === 'edit') {
+            // Modifica un evento esistente
+            $idDaModificare = $_POST['id_evento'];
+            $eventoModificato = new Event($idDaModificare, $_POST['nome_evento'], $_POST['attendees'], $_POST['data_evento']);
+            if ($eventController->modificaEvento($idDaModificare, $eventoModificato)) {
+                echo "Evento modificato con successo.<br>";
+            }
+        } elseif ($action === 'delete') {
+            // Elimina un evento
+            $idDaEliminare = $_POST['id_evento'];
+            if ($eventController->eliminaEvento($idDaEliminare)) {
+                echo "Evento eliminato con successo.<br>";
+            }
+        }
+    }
+
+    // Recupera tutti gli eventi e visualizzali
+    $eventi = $eventController->getEventi();
+    ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Signup</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/styles/dashboard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./assets/styles/style.css">
-    <script src="./assets/js/script.js" defer></script>
-   
+    
+    <title>Admin Dashboard</title>
 </head>
 <body>
+
     <header>
         <svg class="edusogno" xmlns="http://www.w3.org/2000/svg" width="124" height="53" viewBox="0 0 124 53" fill="none">
             <path d="M63.8578 17.1194V19.0764H50.9451C51.4423 18.6273 51.691 17.9536 51.691 16.6703V3.30044C51.691 2.02521 51.4423 1.35151 50.9451 0.894348H63.5851V2.87537C63.1359 2.40217 62.5585 2.1776 61.2592 2.1776H57.0405V8.4976H59.9599C60.7666 8.5749 61.5743 8.36158 62.2377 7.89608V10.3503C61.5743 9.8848 60.7666 9.67148 59.9599 9.74878H57.0405V17.8172H61.5158C62.7831 17.8172 63.3846 17.5926 63.8337 17.1194H63.8578Z" fill="#2D224C"/>
@@ -26,58 +67,77 @@
             <path d="M27.8165 11.5998L24.6555 12.764L32.2426 33.3628L35.4035 32.1986L27.8165 11.5998Z" fill="#2D224C"/>
           </svg>
     </header>
-<div class="bg-zone">
-    <div class="main-content">
-        <h1 class="title">Crea il tuo account</h1>
-        <div class="background">
-            <form action="process-signup.php" method="post" id="signup" novalidate>
-                <div>
-                    <label for="name">Nome</label>
-                    <input type="text" id="name" name="name" placeholder="Mario">
-                    <span id="nameError" class="error-message"></span> 
-                </div>
-            
-                <div>
-                    <label for="surname">Cognome</label>
-                    <input type="text" id="surname" name="surname" placeholder="Rossi">
-                    <span id="surnameError" class="error-message"></span> 
-                </div>
-            
-                <div>
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="name@example.it">
-                    <span id="emailError" class="error-message"></span> 
-                </div>
-            
-                <div>
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Scrivila qui">
-                    <span id="passwordError" class="error-message"></span> 
-                </div>
 
-                <div>
-                    <label for="ruolo">Ruolo</label>
-                    <select id="ruolo" name="ruolo">
-                        <option value="utente">Utente</option>
-                        <option value="amministratore">Amministratore</option>
-                    </select>
-                </div>
-                
-            
-                <div class="button-container"> 
-                    <button type="submit" id="submitBtn">Sign up</button>
-                </div>
-            </form>
-            <div class="link-util">
-                <p>Hai già un account? <a href="login.php">Accedi</a></p>
+    <div class="bg-zone">
+    <h1 class="title">Admin Dashboard</h1>
+        <div class="main-content">
+            <div class="index-ev">
+                <h2 class="title">Elenco degli eventi</h2>
+                <table>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome Evento</th>
+                        <th>Partecipanti</th>
+                        <th>Data Evento</th>
+                        <th>Azioni</th>
+                    </tr>
+                    <?php foreach ($eventi as $e): ?>
+                        <tr>
+                            <td><?php echo $e->getId(); ?></td>
+                            <td><?php echo $e->getNomeEvento(); ?></td>
+                            <td><?php echo $e->getAttendees(); ?></td>
+                            <td><?php echo $e->getDataEvento(); ?></td>
+                            <td>
+                                <form method="post">
+                                    <input type="hidden" name="id_evento" value="<?php echo $e->getId(); ?>">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input class="button" type="submit" value="Elimina">
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+            </div>
+            <div>
+                <h2 class="title">Aggiungi un nuovo evento</h2>
+                <form class="form-add" method="post">
+                    <input type="hidden" name="action" value="add">
+                    <label for="nome_evento">Nome Evento:</label>
+                    <input type="text" name="nome_evento" required><br>
+                    <label for="attendees">Partecipanti:</label>
+                    <input type="text" name="attendees" required><br>
+                    <label for="data_evento">Data Evento:</label>
+                    <input type="text" name="data_evento" required><br>
+                    <input class="button" type="submit" value="Aggiungi Evento">
+                </form>
+            </div>
+            <div>
+                <h2 class="title">Modifica un evento</h2>
+                <form class="form-mod" method="post">
+                    <input type="hidden" name="action" value="edit">
+
+                    <label for="id_evento">ID dell'evento da modificare:</label>
+                    <input type="text" name="id_evento" required><br>
+
+                    <label for="nome_evento">Nome Evento:</label>
+                    <input type="text" name="nome_evento" required><br>
+
+                    <label for="attendees">Partecipanti:</label>
+                    <input type="text" name="attendees" required><br>
+
+                    <label for="data_evento">Data Evento:</label>
+                    <input type="text" name="data_evento" required><br>
+
+                    <input class="button" type="submit" value="Modifica Evento">
+                </form>
             </div>
         </div>
     </div>
-</div>
-    
-    
 
-    
+    <?php
+    // Chiudi la connessione al database
+    $mysqli->close();
+    ?>
+
 </body>
 </html>
-

@@ -20,13 +20,19 @@ if ( ! preg_match("/[a-z]/i", $_POST["password"])) {
     die("Password must contain at least one letter");
 }
 
+$ruolo = "utente"; // Valore predefinito
+
+if (isset($_POST["ruolo"])) {
+    $ruolo = $_POST["ruolo"];
+}
+
 
 $password_hash = password_hash($_POST["password"], PASSWORD_DEFAULT);
 
 $mysqli = require __DIR__ . "/database.php";
 
-$sql = "INSERT INTO utenti (nome, cognome, email, password_hash)
-        VALUES (?, ?, ?, ?)";
+$sql = "INSERT INTO utenti (nome, cognome, email, password_hash, ruolo)
+        VALUES (?, ?, ?, ?, ?)";
         
 $stmt = $mysqli->stmt_init();
 
@@ -34,15 +40,19 @@ if ( ! $stmt->prepare($sql)) {
     die("SQL error: " . $mysqli->error);
 }
 
-$stmt->bind_param("ssss",
+$stmt->bind_param("sssss",
                   $_POST["name"],
                   $_POST["surname"],
                   $_POST["email"],
-                  $password_hash);
+                  $password_hash,
+                  $ruolo);
                   
 if ($stmt->execute()) {
-
-    header("Location: signup-success.html");
+    if ($ruolo === "amministratore") {
+        header("Location: adminHome.php");
+    } else {
+        header("Location: index.php");
+    }
     exit;
     
 } else {
